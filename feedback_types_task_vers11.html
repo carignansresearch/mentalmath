@@ -194,11 +194,22 @@ const META_IDS = {
 
 async function postSummaryToSheet(summary){
   const payload = Object.assign({}, summary, META_IDS);
-  await fetch(SHEET_ENDPOINT, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({kind:'summary', payload}) });
+  return fetch(SHEET_ENDPOINT, {
+    method: 'POST',
+    mode: 'no-cors',                                   // <-- important
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // <-- important
+    body: JSON.stringify({ kind: 'summary', payload })
+  });
 }
+
 async function postTrialsToSheet(trialRows){
   const rows = trialRows.map(r => Object.assign({}, r, META_IDS));
-  await fetch(SHEET_ENDPOINT, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({kind:'trials', payload: rows}) });
+  return fetch(SHEET_ENDPOINT, {
+    method: 'POST',
+    mode: 'no-cors',                                   // <-- important
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // <-- important
+    body: JSON.stringify({ kind: 'trials', payload: rows })
+  });
 }
 
     /* URL overrides */
@@ -233,7 +244,7 @@ async function postTrialsToSheet(trialRows){
       hardStop:null,
       endedBy:'manual'
     };
-    var LEVELS = ['Novice','Apprentice','Adept','Expert','Mastery'];
+    var LEVELS = ['Novice','Apprentice','Skillfull','Expert','Mastery'];
 
     /* attention checks */
     var sawEarly=false, passEarly=false, sawMid=false, passMid=false;
@@ -751,3 +762,4 @@ function confettiBurst(container, ms=4500, n=200){
   </script>
 </body>
 </html>
+
