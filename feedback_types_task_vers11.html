@@ -1,0 +1,753 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Feedback Frequency Task — Fresh Build</title>
+  <style>
+    :root{
+      --paper:#ffffff; --paper-2:#f8fafc; --paper-3:#f3f4f6;
+      --ink:#111827; --ink-2:#374151; --muted:#6b7280;
+      --line:#e5e7eb; --shadow:0 14px 40px rgba(17,24,39,.08);
+      --accent:#2563eb;
+      --good:#10b981; --bad:#ef4444; --recap:#eff6ff;
+      --ring:#93c5fd;
+      --green-dark:#14532d; --red-dark:#b91c1c; --blue:#1d4ed8; --purple:#7c3aed;
+    }
+
+    html,body{height:100%;}
+    body{
+      margin:0;
+      font-family: Georgia, "Times New Roman", serif;
+      color:var(--ink);
+      background:#fff;
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+      font-variant-numeric: tabular-nums lining-nums;
+      font-feature-settings: 'tnum' 1, 'lnum' 1;
+    }
+    *{box-sizing:border-box;}
+    #app{width:100%;max-width:980px;padding:28px;margin:48px auto;}
+    .card{background:var(--paper);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:28px;}
+
+    h1{margin:0 0 14px;font-size:34px;font-weight:700;letter-spacing:.1px;}
+    h2{margin:0 0 10px;font-size:22px;font-weight:700;color:var(--ink-2);}
+    p{margin:0 0 14px;line-height:1.75;}
+    .muted{color:var(--muted);}
+
+    .topbar{position:sticky;top:0;z-index:5;padding:10px 0 12px;margin-bottom:12px;background:rgba(255,255,255,.96);border-bottom:1px solid var(--line);}
+    .top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+    .left,.right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+    .badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--paper-3);color:var(--ink);}
+    .badge.practice{background:#eef2ff;border-color:#c7d2fe;}
+    .badge.main{background:#ecfeff;border-color:#bae6fd;}
+
+    button{border:0;color:#fff;padding:12px 16px;border-radius:12px;font-weight:700;cursor:pointer;transition:transform .06s ease, box-shadow .2s ease;background:linear-gradient(180deg,var(--accent),#1e40af);box-shadow:0 6px 18px rgba(37,99,235,.25);}
+    button:hover{transform:translateY(-1px);box-shadow:0 10px 28px rgba(37,99,235,.28);}
+    button:active{transform:translateY(0);}
+    button.secondary{background:linear-gradient(180deg,#e5e7eb,#cbd5e1);color:#111827;box-shadow:0 4px 14px rgba(0,0,0,.06);}
+
+    .space{height:18px;}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:22px;}
+    .row{display:flex;gap:12px;flex-wrap:wrap;}
+    .hr{height:1px;background:var(--line);margin:16px 0;}
+
+    .problem{font-size:68px;font-weight:700;letter-spacing:.4px;text-align:center;margin-top:28px;}
+    .num{font-variant-numeric: tabular-nums lining-nums; font-feature-settings:'tnum' 1,'lnum' 1;}
+    .op{font-weight:900;}
+    .op.plus{ color:var(--green-dark); }
+    .op.minus{ color:var(--red-dark); }
+    .op.divide{ color:var(--blue); }
+    .op.multiply{ color:var(--purple); }
+
+    .inputline{margin-top:30px;display:flex;justify-content:center;}
+    .inputline input{
+      font-size:30px;padding:14px 18px;border-radius:14px;border:1px solid var(--line);
+      background:var(--paper-2);color:var(--ink);width:280px;text-align:center;
+      outline:none;transition:box-shadow .2s ease,border-color .2s ease;
+      font-variant-numeric: tabular-nums lining-nums; font-feature-settings:'tnum' 1,'lnum' 1;
+    }
+    .inputline input:focus{border-color:var(--ring);box-shadow:0 0 0 4px rgba(147,197,253,.35);}
+    .hint{text-align:center;color:var(--muted);margin-top:12px;}
+
+    .fixation{display:none;}
+
+    .scorebar{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--paper-2);}
+    .score{font-weight:800;font-size:18px;font-variant-numeric: tabular-nums lining-nums; font-feature-settings:'tnum' 1,'lnum' 1;}
+
+    .feedback{min-height:160px;font-size:54px;font-weight:800;text-align:center;margin:44px 0;}
+    .good{color:var(--good);text-shadow:0 0 20px rgba(16,185,129,.35);}
+    .bad{color:var(--bad);text-shadow:0 0 18px rgba(239,68,68,.25);}
+    .bigplus{font-size:170px;line-height:1;animation:plusPop .35s ease, plusGlow 1.2s ease, plusFloat 1.2s ease-in-out 3;animation-fill-mode:both;}
+    @keyframes plusPop{0%{transform:scale(.6) translateY(10px);opacity:.0}60%{transform:scale(1.06)}100%{transform:scale(1);opacity:1}}
+    @keyframes plusGlow{0%{text-shadow:0 0 0 transparent}100%{text-shadow:0 0 26px rgba(16,185,129,.55)}}
+    @keyframes plusFloat{0%{transform:translateY(0)}50%{transform:translateY(-4px)}100%{transform:translateY(0)}}
+
+    .recap{border:2px solid #93c5fd;border-radius:16px;padding:24px;background:var(--recap);box-shadow:0 8px 28px rgba(0,0,0,.06);animation:slideUp .6s ease;}
+    .notice{background:var(--paper-2);border:1px solid var(--line);padding:12px 16px;border-radius:12px;}
+
+    .likert{display:flex;gap:12px;align-items:center;flex-wrap:wrap;}
+    .likert label{display:flex;flex-direction:column;align-items:center;gap:8px;font-size:12px;color:var(--ink-2);}
+    .likert input{transform:scale(1.25);}
+    .q{margin:18px 0 10px;font-weight:700;}
+    textarea{border-radius:12px;border:1px solid var(--line);background:#fff;color:var(--ink);padding:12px;}
+
+    .interstitial{border:2px solid #93c5fd;border-radius:16px;padding:26px;background:linear-gradient(180deg,rgba(37,99,235,.10),rgba(14,165,233,.08));box-shadow:0 10px 36px rgba(0,0,0,.08);text-align:center;animation:slideUp .5s ease;}
+    .bigtitle{font-size:28px;font-weight:900;margin-bottom:8px;}
+    .subtitle{color:var(--muted);margin-bottom:16px;}
+
+    .confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:60;}
+    .confetti .p{position:absolute;width:8px;height:14px;opacity:.95;}
+    @keyframes fall{0%{transform:translateY(-120px) rotate(0)}100%{transform:translateY(120vh) rotate(720deg)}}
+
+  .level-ov{
+  position: fixed;
+  inset: 0;
+  background: #fcfcfc;              /* fully opaque */
+  display: flex;
+  align-items: flex-start;       /* keep banner near top */
+  justify-content: center;
+  padding-top: 8vh;              /* adjust height (smaller = higher) */
+  z-index: 70;
+  animation: fadeIn .2s ease;
+}
+
+/* Ensure panel stays above confetti in overlay */
+.level-panel{ position: relative; z-index: 2; }
+
+/* Confetti area just at the top of the overlay */
+.confetti-top{
+  position: absolute;
+  inset: 0;                /* how tall the confetti region is */
+  pointer-events: none;
+  z-index: 1;                    /* behind the panel, above black bg */
+  overflow: hidden;
+}
+    .level-panel{padding:30px 36px;border-radius:18px;background:radial-gradient(120% 120% at 50% 0%, rgba(225, 219, 225, 0.975) 0%, rgba(14, 164, 233, 0.941) 70%, rgba(255,255,255,.98) 100%);border:2px solid #93c5fd;box-shadow:0 18px 60px rgba(0,0,0,.12);text-align:center;}
+    .level-title{font-size:28px;font-weight:900;margin-bottom:8px;text-shadow:0 0 22px rgba(37,99,235,.45), 0 0 28px rgba(14,165,233,.35);animation:glow 1.4s ease alternate infinite;}
+    .level-sub{font-size:20px;}
+
+    @keyframes fadeIn{from{opacity:0} to{opacity:1}}
+    @keyframes slideUp{0%{transform:translateY(18px);opacity:0}100%{transform:translateY(0);opacity:1}}
+    @keyframes glow{0%{text-shadow:0 0 0 transparent}100%{text-shadow:0 0 25px rgba(124,92,255,.5)}}
+  </style>
+</head>
+<body>
+  <div id="app"><div class="card" id="view"></div></div>
+
+  <script>
+    'use strict';
+
+    /* ---------- Small DOM helper ---------- */
+    function el(tag, attrs){
+      var node = document.createElement(tag);
+      if (attrs){
+        var keys = Object.keys(attrs);
+        for (var i = 0; i < keys.length; i++){
+          var k = keys[i];
+          var v = attrs[k];
+          if (k === 'class'){ node.className = v; }
+          else if (k === 'text'){ node.textContent = v; }
+          else if (k === 'html'){ node.innerHTML = v; }
+          else if (k.slice(0,2) === 'on' && typeof v === 'function'){ node.addEventListener(k.substring(2), v); }
+          else { node.setAttribute(k, v); }
+        }
+      }
+      for (var j = 2; j < arguments.length; j++){
+        var c = arguments[j];
+        if (c == null) continue;
+        if (Array.isArray(c)){
+          for (var t=0;t<c.length;t++){
+            var n=c[t];
+            node.appendChild(typeof n==='string'?document.createTextNode(n):n);
+          }
+        } else {
+          node.appendChild(typeof c==='string'?document.createTextNode(c):c);
+        }
+      }
+      return node;
+    }
+
+
+    /* ---------- Config ---------- */
+    var CONFIG = {
+      MAX_MINUTES:10,
+      MAX_TRIALS:30,
+      PRACTICE_TRIALS:3,
+      FIXATION_MS:300,
+      FEEDBACK_MS:500,
+      ITI_MS:300,
+      BATCH_RECAP_MS:6000,
+      LEVEL_CELEBRATE_MS:3000
+    };
+
+    const SHEET_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyqhQ1mLOmCH8NxRhLCNHH-iRM-bzSdTYJTh87Ihjc519trralUms2bS6BirtT43-A0nw/exec';
+
+const QP = new URLSearchParams(location.search);
+const META_IDS = {
+  PROLIFIC_PID: QP.get('PROLIFIC_PID') || '',
+  STUDY_ID:     QP.get('STUDY_ID')     || '',
+  SESSION_ID:   QP.get('SESSION_ID')   || '',
+  workerId:     QP.get('workerId')     || '',
+  assignmentId: QP.get('assignmentId') || '',
+  hitId:        QP.get('hitId')        || ''
+};
+
+async function postSummaryToSheet(summary){
+  const payload = Object.assign({}, summary, META_IDS);
+  await fetch(SHEET_ENDPOINT, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({kind:'summary', payload}) });
+}
+async function postTrialsToSheet(trialRows){
+  const rows = trialRows.map(r => Object.assign({}, r, META_IDS));
+  await fetch(SHEET_ENDPOINT, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({kind:'trials', payload: rows}) });
+}
+
+    /* URL overrides */
+    var Q = new URLSearchParams(location.search);
+    var ovMin = parseInt(Q.get('minutes'), 10);
+    if (!Number.isNaN(ovMin) && ovMin > 0){ CONFIG.MAX_MINUTES = ovMin; }
+    var ovTri = parseInt(Q.get('trials') || Q.get('max'), 10);
+    if (!Number.isNaN(ovTri) && ovTri > 0){ CONFIG.MAX_TRIALS = ovTri; }
+
+    var hasCrypto = (typeof globalThis !== 'undefined') && globalThis.crypto && typeof globalThis.crypto.randomUUID === 'function';
+    var pid = hasCrypto ? globalThis.crypto.randomUUID() : String(Math.random()).slice(2);
+    var arms = ['micro','batch10','control','levels'];
+    var assignedParam = Q.get('condition') || Q.get('arm') || '';
+    var assigned = arms.indexOf(assignedParam) >= 0 ? assignedParam : arms[Math.floor(Math.random()*arms.length)];
+
+    /* ---------- State ---------- */
+    var S = {
+      phase:'consent',
+      stopped:false,
+      trialIdx:0,
+      practiceIdx:0,
+      blockIdx:0,
+      blockTrials:0,
+      blockCorrect:0,
+      totalCorrect:0,
+      totalIncorrect:0,
+      vitality:0,
+      levelCount:0,
+      sessionStartAt:Date.now(),
+      mainStartAt:null,
+      mainEndAt:null,
+      hardStop:null,
+      endedBy:'manual'
+    };
+    var LEVELS = ['Novice','Apprentice','Adept','Expert','Mastery'];
+
+    /* attention checks */
+    var sawEarly=false, passEarly=false, sawMid=false, passMid=false;
+
+    /* logs */
+    var trials = [];
+
+    /* timers */
+    var timers = new Set();
+    function later(fn, ms){
+      var id = setTimeout(function(){
+        timers.delete(id);
+        if (!S.stopped){ fn(); }
+      }, ms);
+      timers.add(id);
+      return id;
+    }
+    function clearTimers(){
+      timers.forEach(function(id){ clearTimeout(id); });
+      timers.clear();
+    }
+
+    /* DOM */
+    var view = document.getElementById('view');
+    function setView(node){ view.innerHTML=''; view.appendChild(node); }
+    function fmt(ms){
+      var t = Math.max(0, Math.floor(ms/1000));
+      var m = String(Math.floor(t/60)).padStart(2,'0');
+      var s = String(t%60).padStart(2,'0');
+      return m+':'+s;
+    }
+
+    /* ---------- Problem rendering helpers ---------- */
+    function renderOpSpan(op){
+      var cls='plus';
+      if (op === '-') cls='minus';
+      else if (op === '÷') cls='divide';
+      else if (op === '×') cls='multiply';
+      return el('span', { class:'op '+cls }, op);
+    }
+    function renderProblem(pb){
+      return el('div', { class:'problem' },
+        el('span', { class:'num' }, String(pb.a)),
+        ' ',
+        renderOpSpan(pb.op),
+        ' ',
+        el('span', { class:'num' }, String(pb.b)),
+        ' = ?'
+      );
+    }
+
+    /* ---------- Problems (ramping difficulty) ---------- */
+    function RI(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
+    function addUnder10(){
+      while(true){
+        var a=RI(0,9), b=RI(0,9);
+        if (a+b<10) return {a:a,b:b,op:'+',ans:a+b,tag:'add_u10'};
+      }
+    }
+    function subUnder10(){ var a=RI(0,9), b=RI(0,a); return {a:a,b:b,op:'-',ans:a-b,tag:'sub_u10'}; }
+    function mulEasy(){ var a=RI(2,5), b=RI(2,5); return {a:a,b:b,op:'×',ans:a*b,tag:'mul_easy'}; }
+    function divEasy(){ var a=RI(2,5), b=RI(2,5), p=a*b; return {a:p,b:a,op:'÷',ans:b,tag:'div_easy'}; }
+    function addNoCarry(){
+      while(true){
+        var ta=RI(1,8), tb=RI(1,9-ta), oa=RI(0,9), ob=RI(0,9-oa);
+        var a=ta*10+oa, b=tb*10+ob, s=a+b;
+        if (s<100) return {a:a,b:b,op:'+',ans:s,tag:'add_no_carry'};
+      }
+    }
+    function subNoBorrow(){
+      while(true){
+        var ta=RI(2,9), tb=RI(1,ta), oa=RI(0,9), ob=RI(0,oa);
+        var a=ta*10+oa, b=tb*10+ob;
+        if (a>=b && a<100 && b>=10) return {a:a,b:b,op:'-',ans:a-b,tag:'sub_no_borrow'};
+      }
+    }
+    function addCarry(){
+      while(true){
+        var a=RI(10,89), b=RI(10,89);
+        if ((a%10)+(b%10)>=10){
+          var s=a+b;
+          if (s<200) return {a:a,b:b,op:'+',ans:s,tag:'add_carry'};
+        }
+      }
+    }
+    function subBorrow(){
+      while(true){
+        var a=RI(20,99), b=RI(10,a-1);
+        if ((a%10)<(b%10) && a>=b) return {a:a,b:b,op:'-',ans:a-b,tag:'sub_borrow'};
+      }
+    }
+    function mul1x2(){ var a=RI(2,9), b=RI(10,19); return {a:a,b:b,op:'×',ans:a*b,tag:'mul_1x2'}; }
+    function div2by1(){ var d=RI(2,9), q=RI(10,19), p=d*q; return {a:p,b:d,op:'÷',ans:q,tag:'div_2by1'}; }
+    function problemFor(trial){
+      if (trial<=6){ var g=[addUnder10,subUnder10,mulEasy,divEasy]; return g[RI(0,g.length-1)](); }
+      if (trial<=14){ return Math.random()<0.5 ? addNoCarry() : subNoBorrow(); }
+      if (trial<=22){ return Math.random()<0.5 ? addCarry() : subBorrow(); }
+      return Math.random()<0.5 ? mul1x2() : div2by1();
+    }
+
+    /* ---------- Top bar ---------- */
+    function phaseBadge(){
+      var isPractice = S.phase.indexOf('practice') === 0;
+      return el('span', { class:'badge '+(isPractice?'practice':'main') }, isPractice?'Practice':'Main Task');
+    }
+    function topbar(){
+      var left = el('div', { class:'left' },
+        el('span', { class:'badge' }, 'Participant ', el('strong', {}, pid.slice(0,8))),
+        phaseBadge(),
+        (assigned==='levels' ? el('span', { class:'badge', id:'levelBadge' }, 'Level: ', el('strong', {}, LEVELS[Math.min(S.levelCount, LEVELS.length-1)])) : null)
+      );
+      var right = el('div', { class:'right' },
+        el('div', { class:'scorebar' }, 'Vitality: ', el('span', { class:'score', id:'score' }, String(S.vitality))),
+        el('button', { class:'secondary', onclick:function(){ onStop('manual'); } }, 'Stop & Finish')
+      );
+      return el('div', { class:'topbar' }, el('div', { class:'top' }, left, right));
+    }
+    function updateLevelBadge(){
+      if (assigned!=='levels') return;
+      var b = document.getElementById('levelBadge');
+      if (b){ b.innerHTML = 'Level: <strong>' + LEVELS[Math.min(S.levelCount, LEVELS.length-1)] + '</strong>'; }
+    }
+
+    /* ---------- Screens ---------- */
+    function screenConsent(){
+      setView(el('div', {},
+        el('h1', {}, 'Problem-Solving Study'),
+        el('p', {}, "You'll solve short math problems. You can stop at any time using ", el('strong', {}, 'Stop & Finish'), '.'),
+        el('div', { class:'space' }),
+        el('div', { class:'row' }, el('button', { onclick:function(){ S.phase='instructions'; screenInstructions(); } }, 'I consent & continue'))
+      ));
+    }
+
+    function screenInstructions(){
+      setView(el('div', {},
+        el('h1', {}, 'Instructions'),
+        el('p', {}, 'Type your answer and press Enter. Practice is brief, then the main task begins.'),
+        el('ul', {},
+          el('li', {}, 'Practice: ', String(CONFIG.PRACTICE_TRIALS), ' problems.'),
+          el('li', {}, 'Main task: self-paced. ', el('strong', {}, 'Stop & Finish'), ' is always available.')
+        ),
+        el('div', { class:'space' }),
+        el('div', { class:'row' }, el('button', { onclick:startPractice }, 'Start practice'))
+      ));
+    }
+
+    function screenPracticeFix(){ setView(el('div', {}, topbar())); }
+    function screenMainFix(){ setView(el('div', {}, topbar())); }
+
+    function screenPracticeProblem(pb){
+      var input = el('input', { id:'answer', type:'number', inputmode:'numeric', autocomplete:'off', placeholder:'Your answer' });
+      input.addEventListener('keydown', function(e){ if(e.key==='Enter'){ nextPractice(); } });
+      setView(el('div', {},
+        topbar(),
+        renderProblem(pb),
+        el('div', { class:'inputline' }, input),
+        el('div', { class:'hint' }, 'Press Enter to submit')
+      ));
+      input.focus();
+    }
+
+    function screenPracticeDone(){
+      setView(el('div', {}, topbar(),
+        el('div', { class:'interstitial' },
+          el('div', { class:'bigtitle' }, 'Practice complete'),
+          el('div', { class:'subtitle' }, "You're about to begin the main task. You can stop at any time using ", el('strong', {}, 'Stop & Finish'), '.'),
+          el('button', { onclick:startMain }, 'Begin main task')
+        )
+      ));
+    }
+
+    function screenMainProblem(pb){
+      var input = el('input', { id:'answer', type:'number', inputmode:'numeric', autocomplete:'off', placeholder:'Your answer' });
+      var token = hasCrypto ? globalThis.crypto.randomUUID() : String(Math.random()).slice(2);
+      input.addEventListener('keydown', function(e){ if(e.key==='Enter'){ handleSubmit(pb, token, input); } });
+      setView(el('div', {},
+        topbar(),
+        renderProblem(pb),
+        el('div', { class:'inputline' }, input),
+        el('div', { class:'hint' }, 'Press Enter to submit')
+      ));
+      input.focus();
+    }
+
+    function screenFeedback(correct){
+      var msg = correct ? el('span', { class:'good bigplus' }, '+1') : el('span', { class:'bad' }, '-1');
+      setView(el('div', {}, topbar(), el('div', { class:'feedback' }, msg)));
+    }
+
+    function screenRecap(){
+      var delta = S.blockCorrect - (S.blockTrials - S.blockCorrect);
+      var msg = (delta>=0 ? 'Vitality +' : 'Vitality ') + String(delta);
+      setView(el('div', {}, topbar(),
+        el('div', { class:'recap' },
+          el('h2', {}, 'Block ' + S.blockIdx + ' recap'),
+          el('div', { class:'row' },
+            el('div', {}, 'Correct: ', el('strong', {}, String(S.blockCorrect)), ' / ', String(S.blockTrials)),
+            el('div', {}, msg)
+          ),
+          el('div', { class:'muted' }, 'Continuing…')
+        )
+      ));
+    }
+
+    function screenSurvey(){
+      function likert(name){
+        var row = el('div', { class:'likert' });
+        for (var v=1; v<=7; v++){
+          var label = el('label', {});
+          var attrs = { type:'radio', name:name, value:String(v) };
+          if (v===1) attrs.required = 'required';
+          var inp = el('input', attrs);
+          label.appendChild(inp);
+          label.appendChild(el('div', {}, String(v)));
+          row.appendChild(label);
+        }
+        return row;
+      }
+      function mc1Group(){
+        var wrap = el('div', {});
+        wrap.appendChild(el('div', { class:'q' }, 'During the task, how often did you receive progress information?'));
+        var opts = ['Every trial','About every 10 trials','Only at the end','Not sure'];
+        for (var i=0;i<opts.length;i++){
+          var opt = opts[i];
+          var label = el('label', { style:'display:block;margin:6px 0' });
+          var attrs = { type:'radio', name:'MC1', value:opt };
+          if (i===0) attrs.required = 'required';
+          label.appendChild(el('input', attrs));
+          label.appendChild(document.createTextNode(' '+opt));
+          wrap.appendChild(label);
+        }
+        return wrap;
+      }
+      var form = el('form', { id:'surveyForm', onsubmit:function(e){ e.preventDefault(); submitSurvey(); } },
+        el('h1', {}, 'Quick survey'),
+        el('div', { class:'hr' }),
+        mc1Group(),
+        el('div', { class:'q' }, 'How clear was your sense of progress during the task?'),
+        likert('MC2'),
+        el('div', { class:'hr' }),
+        el('div', { class:'q' }, 'I felt I was improving as I worked.'), likert('S1'),
+        el('div', { class:'q' }, 'I wanted to stop before the task ended.'), likert('S2'),
+        el('div', { class:'q' }, 'I felt fatigued by the task.'), likert('S3'),
+        el('div', { class:'q' }, 'I was bored during the task.'), likert('S4'),
+        el('div', { class:'q' }, 'I understood how well I was doing during the task.'), likert('S5'),
+        el('div', { class:'q' }, 'I prioritized accuracy over speed.'), likert('S6'),
+        el('div', { class:'q' }, 'If you considered stopping, what mainly drove that thought? (≤150 chars)'),
+        el('textarea', { id:'OE1', maxlength:'150', style:'width:100%;min-height:80px' }),
+        el('div', { class:'space' }),
+        el('button', { type:'submit' }, 'Submit survey')
+      );
+      setView(form);
+    }
+
+    function screenDebrief(summary){
+      var left = el('div', {},
+        el('p', {}, el('strong', {}, 'Time on task:'), ' ', fmt(summary.mainMs)),
+        el('p', {}, el('strong', {}, 'Problems attempted:'), ' ', String(summary.mainTrials)),
+        el('p', {}, el('strong', {}, 'Accuracy:'), ' ', (summary.acc*100).toFixed(1), '% (', String(summary.totalCorrect), '/', String(summary.totalCorrect+summary.totalIncorrect), ')'),
+        el('p', {}, el('strong', {}, 'Vitality (correct - incorrect):'), ' ', String(summary.vitality)),
+        el('p', {}, el('strong', {}, 'Ended by:'), ' ', summary.endedBy)
+      );
+      var right = el('div', {},
+        el('p', {}, summary.exclusionReason ? el('span', { class:'notice' }, 'Exclusion flag: '+summary.exclusionReason) : el('span', { class:'muted' }, 'Exclusion flag: none')),
+        el('p', { class:'muted' }, 'You can download your data below.'),
+        el('div', { class:'row' },
+          el('button', { onclick:downloadCSV }, 'Download trials.csv'),
+          el('button', { class:'secondary', onclick:downloadJSON }, 'Download summary.json')
+        )
+      );
+      setView(el('div', {},
+        el('h1', {}, 'Done'),
+        el('div', { class:'notice' }, 'Thank you for participating!'),
+        el('div', { class:'hr' }),
+        el('div', { class:'grid-2' }, left, right)
+      ));
+    }
+
+    /* ---------- Levels celebration ---------- */
+  function showLevelCelebration(levelName){
+  const ov = el('div', { class:'level-ov' });
+
+  // Confetti container at the TOP of the overlay (higher on screen)
+  const topConfetti = el('div', { class:'confetti-top' });
+
+  const panel = el('div', { class:'level-panel' },
+    el('div', { class:'level-title' }, 'Congratulations!'),
+    el('div', { class:'level-sub' }, 'You made it to ', el('strong', {}, levelName))
+  );
+
+  // Order matters: confetti (z-index 1), then panel (z-index 2)
+  ov.appendChild(topConfetti);
+  ov.appendChild(panel);
+  document.body.appendChild(ov);
+
+  // Start confetti NOW (same time as popup), vibrant and longer
+  confettiBurst(topConfetti, 4500, 220);
+
+  // Remove overlay (and confetti container) together
+  setTimeout(()=> { ov.remove(); }, CONFIG.LEVEL_CELEBRATE_MS);
+}
+
+
+    /* ---------- Flow ---------- */
+    function startPractice(){
+      S.stopped=false; clearTimers(); S.practiceIdx=0; S.phase='practice'; practiceLoop();
+    }
+    function practiceLoop(){
+      if (S.practiceIdx >= CONFIG.PRACTICE_TRIALS){ screenPracticeDone(); return; }
+      screenPracticeFix();
+      later(function(){
+        var pb = problemFor(S.practiceIdx+1);
+        screenPracticeProblem(pb);
+        S.practiceIdx++;
+      }, CONFIG.FIXATION_MS);
+    }
+    function nextPractice(){ later(practiceLoop, CONFIG.ITI_MS); }
+
+    function startMain(){
+      S.stopped=false; clearTimers();
+      S.phase='main';
+      S.trialIdx=0; S.blockIdx=1; S.blockTrials=0; S.blockCorrect=0; S.totalCorrect=0; S.totalIncorrect=0; S.vitality=0; S.levelCount=0;
+      S.mainStartAt=Date.now();
+      updateLevelBadge();
+      S.hardStop = later(function(){ onStop('timeout'); }, CONFIG.MAX_MINUTES*60*1000);
+      mainLoop();
+    }
+
+    function mainLoop(){
+      if (S.trialIdx >= CONFIG.MAX_TRIALS){ onStop('trialCap'); return; }
+      screenMainFix();
+      later(function(){
+        var idx = S.trialIdx + 1;
+        var pb;
+        if (!sawEarly && idx===3){ sawEarly=true; pb={a:1,b:1,op:'+',ans:2,tag:'attention_early'}; }
+        else if (!sawMid && idx===16){ sawMid=true; pb={a:10,b:0,op:'-',ans:10,tag:'attention_mid'}; }
+        else { pb = problemFor(idx); }
+        pb.trial=idx; pb.block=S.blockIdx; pb.presentedAt=performance.now();
+        screenMainProblem(pb);
+      }, CONFIG.FIXATION_MS);
+    }
+
+    function handleSubmit(pb, token, inputEl){
+      if (S.stopped) return;
+      var raw=(inputEl.value||'').trim();
+      if (raw==='') return;
+      var given=Number(raw);
+      if (Number.isNaN(given)) return;
+
+      inputEl.disabled=true; inputEl.blur();
+      var rt=Math.max(0, performance.now()-pb.presentedAt);
+      var correct=(given===pb.ans);
+
+      S.trialIdx++; S.blockTrials++;
+      if (correct){ S.totalCorrect++; S.blockCorrect++; S.vitality+=1; } else { S.totalIncorrect++; S.vitality-=1; }
+
+      if (pb.tag==='attention_early') passEarly=correct;
+      if (pb.tag==='attention_mid') passMid=correct;
+
+      trials.push({
+        pid:pid, arm:assigned, trial:pb.trial, block:pb.block, a:pb.a, op:pb.op, b:pb.b,
+        ans:pb.ans, given:given, correct:correct, rt_ms:Math.round(rt),
+        vitality_after:S.vitality, tag:(pb.tag||''), timestamp:new Date().toISOString()
+      });
+
+      var scoreEl=document.getElementById('score');
+      if (scoreEl) scoreEl.textContent=String(S.vitality);
+
+      if (assigned==='levels'){
+        var before = S.levelCount;
+        var newLevel = Math.floor(S.totalCorrect/5);
+        if (newLevel > before){
+          S.levelCount = newLevel;
+          updateLevelBadge();
+          var name = LEVELS[Math.min(S.levelCount, LEVELS.length-1)];
+          showLevelCelebration(name);
+          later(function(){ afterITI(); }, CONFIG.LEVEL_CELEBRATE_MS);
+          return;
+        }
+      }
+
+      if (assigned==='micro'){
+        screenFeedback(correct);
+        later(function(){
+          if (S.trialIdx >= CONFIG.MAX_TRIALS){ onStop('trialCap'); return; }
+          afterITI();
+        }, CONFIG.FEEDBACK_MS);
+      } else {
+        afterITI();
+      }
+    }
+
+    function afterITI(){
+      if (S.trialIdx >= CONFIG.MAX_TRIALS){ onStop('trialCap'); return; }
+      if (assigned==='batch10' && S.blockTrials===10){
+        screenRecap();
+        later(function(){ S.blockIdx++; S.blockTrials=0; S.blockCorrect=0; mainLoop(); }, CONFIG.BATCH_RECAP_MS);
+        return;
+      }
+      if (S.blockTrials===10){ S.blockIdx++; S.blockTrials=0; S.blockCorrect=0; }
+      mainLoop();
+    }
+
+    function onStop(reason){
+      S.endedBy = reason || 'manual';
+      S.stopped = true;
+      clearTimers();
+      if (S.hardStop){ clearTimeout(S.hardStop); S.hardStop=null; }
+      S.mainEndAt = Date.now();
+      screenSurvey();
+    }
+
+    function submitSurvey(){
+      var form=document.getElementById('surveyForm')||view;
+      function pick(name){
+        var el=form.querySelector('input[name="'+name+'"]:checked');
+        return el ? (Number(el.value)||el.value) : null;
+      }
+      var MC1El=form.querySelector('input[name="MC1"]:checked');
+      var MC1 = MC1El ? MC1El.value : null;
+      var MC2=pick('MC2'), S1=pick('S1'), S2=pick('S2'), S3=pick('S3'), S4=pick('S4'), S5=pick('S5'), S6=pick('S6');
+      if(!MC1||!MC2||!S1||!S2||!S3||!S4||!S5||!S6){ alert('Please answer all required questions.'); return; }
+      var OE1El=form.querySelector('#OE1'); var OE1=(OE1El?OE1El.value:'').trim();
+
+      var mainMs=Math.max(0,(S.mainEndAt||Date.now())-(S.mainStartAt||Date.now()));
+      var mainTrials=trials.length; var acc=mainTrials>0?(S.totalCorrect/mainTrials):0;
+      var excl='';
+      if (mainTrials<15) excl='Fewer than 15 trials';
+      var sawBoth=sawEarly&&sawMid;
+      var failedBoth=(sawEarly&&!passEarly)&&(sawMid&&!passMid);
+      if (sawBoth&&failedBoth) excl=(excl?excl+'; ':'')+'Failed attention checks';
+
+      var summary={
+        pid:pid, arm:assigned,
+        sessionStartedAt:new Date(S.sessionStartAt).toISOString(),
+        mainStartedAt:new Date(S.mainStartAt||Date.now()).toISOString(),
+        mainEndedAt:new Date(S.mainEndAt||Date.now()).toISOString(),
+        mainMs:mainMs, mainTrials:mainTrials,
+        totalCorrect:S.totalCorrect, totalIncorrect:S.totalIncorrect,
+        vitality:S.vitality, acc:acc, endedBy:S.endedBy,
+        limits:{minutes:CONFIG.MAX_MINUTES, trials:CONFIG.MAX_TRIALS},
+        attention:{sawEarly:sawEarly, passEarly:passEarly, sawMid:sawMid, passMid:passMid},
+        survey:{MC1:MC1, MC2:MC2, S1:S1, S2:S2, S3:S3, S4:S4, S5:S5, S6:S6, OE1:OE1},
+        exclusionReason:excl
+      };
+      window.__summary=summary;
+      screenDebrief(summary);
+
+      postSummaryToSheet(summary).catch(()=>{});
+      postTrialsToSheet(trials).catch(()=>{});
+
+    }
+
+    /* ---------- Downloads ---------- */
+    function downloadCSV(){
+      var header=['pid','arm','trial','block','a','op','b','ans','given','correct','rt_ms','vitality_after','tag','timestamp'];
+      var lines=[header.join(',')];
+      for (var i=0;i<trials.length;i++){
+        var t=trials[i];
+        lines.push([t.pid,t.arm,t.trial,t.block,t.a,t.op,t.b,t.ans,t.given,t.correct,t.rt_ms,t.vitality_after,t.tag,t.timestamp].join(','));
+      }
+      var blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+      var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='trials_'+pid+'_'+assigned+'.csv'; document.body.appendChild(a); a.click(); a.remove();
+    }
+    function downloadJSON(){
+      var data=window.__summary||{};
+      var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+      var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='summary_'+pid+'_'+assigned+'.json'; document.body.appendChild(a); a.click(); a.remove();
+    }
+
+    /* ---------- Confetti ---------- */
+    function confetti(ms=4200, n=160){
+  const root = el('div', { class:'confetti' });
+  const cols = ['#FF3B30','#FF9500','#FFCC00','#34C759','#00C7BE','#007AFF','#AF52DE','#5856D6','#FF2D55']; // vibrant
+  for (let i=0;i<n;i++){
+    const p = el('div', { class:'p' });
+    p.style.left = (Math.random()*100) + 'vw';
+    p.style.top = '-24px';
+    p.style.width = (6 + Math.random()*10) + 'px';
+    p.style.height = (10 + Math.random()*16) + 'px';
+    p.style.background = cols[i % cols.length];
+    p.style.opacity = (0.92 + Math.random()*0.08).toFixed(2);
+    const dur = 1200 + Math.random()*1800; // 1.2s–3.0s
+    p.style.animation = `fall ${dur}ms linear`;
+    p.style.transform = `translateY(-140px) rotate(${Math.random()*360}deg)`;
+    p.style.filter = 'saturate(1.35)';
+    root.appendChild(p);
+  }
+  document.body.appendChild(root);
+  setTimeout(()=> root.remove(), ms); // keep on screen longer than most pieces
+}
+function confettiBurst(container, ms=4500, n=200){
+  const cols = ['#FF3B30','#FF9500','#FFCC00','#34C759','#00C7BE','#007AFF','#AF52DE','#5856D6','#FF2D55']; // vibrant
+  for (let i=0;i<n;i++){
+    const p = el('div', { class:'p' });
+    p.style.position = 'absolute';
+    p.style.left = (Math.random()*100) + '%';
+    p.style.top = '-24px';
+    p.style.width = (6 + Math.random()*10) + 'px';
+    p.style.height = (10 + Math.random()*16) + 'px';
+    p.style.background = cols[i % cols.length];
+    p.style.opacity = (0.92 + Math.random()*0.08).toFixed(2);
+    const dur = 1200 + Math.random()*2200;     // 1.2s–3.4s
+    p.style.animation = `fall ${dur}ms linear`; // reuses your @keyframes fall
+    p.style.transform = `translateY(-140px) rotate(${Math.random()*360}deg)`;
+    p.style.filter = 'saturate(1.35)';
+    container.appendChild(p);
+  }
+  setTimeout(()=>{ if (container && container.parentNode){ container.remove(); } }, ms);
+}
+
+    /* ---------- Kickoff ---------- */
+    setView(el('div', {}, el('h1', {}, 'Loading…')));
+    screenConsent();
+  </script>
+</body>
+</html>
