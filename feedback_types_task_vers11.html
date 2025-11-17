@@ -41,10 +41,28 @@
     .badge.practice{background:#eef2ff;border-color:#c7d2fe;}
     .badge.main{background:#ecfeff;border-color:#bae6fd;}
 
-    button{border:0;color:#fff;padding:12px 16px;border-radius:12px;font-weight:700;cursor:pointer;transition:transform .06s ease, box-shadow .2s ease;background:linear-gradient(180deg,var(--accent),#1e40af);box-shadow:0 6px 18px rgba(37,99,235,.25);}
+    button{
+      border:0;color:#fff;padding:12px 16px;border-radius:12px;font-weight:700;
+      cursor:pointer;transition:transform .06s ease, box-shadow .2s ease;
+      background:linear-gradient(180deg,var(--accent),#1e40af);
+      box-shadow:0 6px 18px rgba(37,99,235,.25);
+    }
     button:hover{transform:translateY(-1px);box-shadow:0 10px 28px rgba(37,99,235,.28);}
     button:active{transform:translateY(0);}
-    button.secondary{background:linear-gradient(180deg,#e5e7eb,#cbd5e1);color:#111827;box-shadow:0 4px 14px rgba(0,0,0,.06);}
+    button.secondary{
+      background:linear-gradient(180deg,#e5e7eb,#cbd5e1);
+      color:#111827;
+      box-shadow:0 4px 14px rgba(0,0,0,.06);
+    }
+    /* RED stop button, scoped only to Stop & Finish */
+    button.taskStop{
+      background:linear-gradient(180deg,var(--bad),var(--red-dark));
+      box-shadow:0 6px 18px rgba(239,68,68,.32);
+      color:#fff;
+    }
+    button.taskStop:hover{
+      box-shadow:0 10px 28px rgba(239,68,68,.45);
+    }
 
     .space{height:18px;}
     .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:22px;}
@@ -94,35 +112,87 @@
     .interstitial{border:2px solid #93c5fd;border-radius:16px;padding:26px;background:linear-gradient(180deg,rgba(37,99,235,.10),rgba(14,165,233,.08));box-shadow:0 10px 36px rgba(0,0,0,.08);text-align:center;animation:slideUp .5s ease;}
     .bigtitle{font-size:28px;font-weight:900;margin-bottom:8px;}
     .subtitle{color:var(--muted);margin-bottom:16px;}
+        .inst-block{
+      margin-top:10px;
+      margin-bottom:18px;
+    }
+    .inst-line{
+      font-size:18px;
+      line-height:1.7;
+      margin:6px 0;
+    }
+        .inst-list{
+      margin-top:8px;
+    }
+    .inst-list li{
+      font-size:18px;
+      line-height:1.7;
+    }
 
-    .confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:60;}
-    .confetti .p{position:absolute;width:8px;height:14px;opacity:.95;}
-    @keyframes fall{0%{transform:translateY(-120px) rotate(0)}100%{transform:translateY(120vh) rotate(720deg)}}
 
-  .level-ov{
-  position: fixed;
-  inset: 0;
-  background: #fcfcfc;              /* fully opaque */
-  display: flex;
-  align-items: flex-start;       /* keep banner near top */
-  justify-content: center;
-  padding-top: 8vh;              /* adjust height (smaller = higher) */
-  z-index: 70;
-  animation: fadeIn .2s ease;
-}
 
-/* Ensure panel stays above confetti in overlay */
-.level-panel{ position: relative; z-index: 2; }
+        .confetti{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      overflow:hidden;
+      z-index:60;
+    }
+    .confetti .p{
+      position:absolute;
+      width:8px;
+      height:14px;
+      opacity:.95;
+      border-radius:2px;
+      will-change:transform, opacity;
+      transform-origin:center top;
+    }
 
-/* Confetti area just at the top of the overlay */
-.confetti-top{
-  position: absolute;
-  inset: 0;                /* how tall the confetti region is */
-  pointer-events: none;
-  z-index: 1;                    /* behind the panel, above black bg */
-  overflow: hidden;
-}
-    .level-panel{padding:30px 36px;border-radius:18px;background:radial-gradient(120% 120% at 50% 0%, rgba(225, 219, 225, 0.975) 0%, rgba(14, 164, 233, 0.941) 70%, rgba(255,255,255,.98) 100%);border:2px solid #93c5fd;box-shadow:0 18px 60px rgba(0,0,0,.12);text-align:center;}
+    @keyframes fall{
+      0%{
+        transform:translate3d(0,-120px,0) rotateZ(0deg) rotateX(0deg);
+        opacity:1;
+      }
+      50%{
+        transform:translate3d(calc(var(--driftX) * 0.5), 50vh, 0) rotateZ(180deg) rotateX(90deg);
+        opacity:1;
+      }
+      100%{
+        transform:translate3d(var(--driftX), 120vh, 0) rotateZ(360deg) rotateX(180deg);
+        opacity:0.9;
+      }
+    }
+
+
+    .level-ov{
+      position: fixed;
+      inset: 0;
+      background: #fcfcfc;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 8vh;
+      z-index: 70;
+      animation: fadeIn .2s ease;
+    }
+
+    .level-panel{ position: relative; z-index: 2; }
+
+    .confetti-top{
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .level-panel{
+      padding:30px 36px;border-radius:18px;
+      background:radial-gradient(120% 120% at 50% 0%, rgba(225, 219, 225, 0.975) 0%, rgba(14, 164, 233, 0.941) 70%, rgba(255,255,255,.98) 100%);
+      border:2px solid #93c5fd;
+      box-shadow:0 18px 60px rgba(0,0,0,.12);
+      text-align:center;
+    }
     .level-title{font-size:28px;font-weight:900;margin-bottom:8px;text-shadow:0 0 22px rgba(37,99,235,.45), 0 0 28px rgba(14,165,233,.35);animation:glow 1.4s ease alternate infinite;}
     .level-sub{font-size:20px;}
 
@@ -167,7 +237,6 @@
       return node;
     }
 
-
     /* ---------- Config ---------- */
     var CONFIG = {
       MAX_MINUTES:10,
@@ -177,40 +246,43 @@
       FEEDBACK_MS:500,
       ITI_MS:300,
       BATCH_RECAP_MS:6000,
-      LEVEL_CELEBRATE_MS:3000
+      LEVEL_CELEBRATE_MS:3000,
+      TIME_LIMIT_START_MS:10000,   // starting per-trial time limit (ms)
+      TIME_LIMIT_STEP_MS:2000,     // shrink per 5 correct
+      TIME_LIMIT_MIN_MS:3000       // floor
     };
 
     const SHEET_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyqhQ1mLOmCH8NxRhLCNHH-iRM-bzSdTYJTh87Ihjc519trralUms2bS6BirtT43-A0nw/exec';
 
-const QP = new URLSearchParams(location.search);
-const META_IDS = {
-  PROLIFIC_PID: QP.get('PROLIFIC_PID') || '',
-  STUDY_ID:     QP.get('STUDY_ID')     || '',
-  SESSION_ID:   QP.get('SESSION_ID')   || '',
-  workerId:     QP.get('workerId')     || '',
-  assignmentId: QP.get('assignmentId') || '',
-  hitId:        QP.get('hitId')        || ''
-};
+    const QP = new URLSearchParams(location.search);
+    const META_IDS = {
+      PROLIFIC_PID: QP.get('PROLIFIC_PID') || '',
+      STUDY_ID:     QP.get('STUDY_ID')     || '',
+      SESSION_ID:   QP.get('SESSION_ID')   || '',
+      workerId:     QP.get('workerId')     || '',
+      assignmentId: QP.get('assignmentId') || '',
+      hitId:        QP.get('hitId')        || ''
+    };
 
-async function postSummaryToSheet(summary){
-  const payload = Object.assign({}, summary, META_IDS);
-  return fetch(SHEET_ENDPOINT, {
-    method: 'POST',
-    mode: 'no-cors',                                   // <-- important
-    headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // <-- important
-    body: JSON.stringify({ kind: 'summary', payload })
-  });
-}
+    async function postSummaryToSheet(summary){
+      const payload = Object.assign({}, summary, META_IDS);
+      return fetch(SHEET_ENDPOINT, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ kind: 'summary', payload })
+      });
+    }
 
-async function postTrialsToSheet(trialRows){
-  const rows = trialRows.map(r => Object.assign({}, r, META_IDS));
-  return fetch(SHEET_ENDPOINT, {
-    method: 'POST',
-    mode: 'no-cors',                                   // <-- important
-    headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // <-- important
-    body: JSON.stringify({ kind: 'trials', payload: rows })
-  });
-}
+    async function postTrialsToSheet(trialRows){
+      const rows = trialRows.map(r => Object.assign({}, r, META_IDS));
+      return fetch(SHEET_ENDPOINT, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ kind: 'trials', payload: rows })
+      });
+    }
 
     /* URL overrides */
     var Q = new URLSearchParams(location.search);
@@ -221,7 +293,9 @@ async function postTrialsToSheet(trialRows){
 
     var hasCrypto = (typeof globalThis !== 'undefined') && globalThis.crypto && typeof globalThis.crypto.randomUUID === 'function';
     var pid = hasCrypto ? globalThis.crypto.randomUUID() : String(Math.random()).slice(2);
-    var arms = ['micro','batch10','control','levels'];
+
+    /* ONLY THREE ARMS NOW: control, batch10, levels */
+    var arms = ['control','batch10','levels'];
     var assignedParam = Q.get('condition') || Q.get('arm') || '';
     var assigned = arms.indexOf(assignedParam) >= 0 ? assignedParam : arms[Math.floor(Math.random()*arms.length)];
 
@@ -242,7 +316,9 @@ async function postTrialsToSheet(trialRows){
       mainStartAt:null,
       mainEndAt:null,
       hardStop:null,
-      endedBy:'manual'
+      endedBy:'manual',
+      timeLimitMs: CONFIG.TIME_LIMIT_START_MS,
+      trialTimerId: null
     };
     var LEVELS = ['Novice','Apprentice','Skillfull','Expert','Mastery'];
 
@@ -254,6 +330,12 @@ async function postTrialsToSheet(trialRows){
 
     /* timers */
     var timers = new Set();
+    function clearTrialTimers(){
+      if (S.trialTimerId != null){
+        clearInterval(S.trialTimerId);
+        S.trialTimerId = null;
+      }
+    }
     function later(fn, ms){
       var id = setTimeout(function(){
         timers.delete(id);
@@ -265,6 +347,7 @@ async function postTrialsToSheet(trialRows){
     function clearTimers(){
       timers.forEach(function(id){ clearTimeout(id); });
       timers.clear();
+      clearTrialTimers();
     }
 
     /* DOM */
@@ -296,7 +379,7 @@ async function postTrialsToSheet(trialRows){
       );
     }
 
-    /* ---------- Problems (ramping difficulty) ---------- */
+    /* ---------- Problems (ramping difficulty, slightly faster) ---------- */
     function RI(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
     function addUnder10(){
       while(true){
@@ -338,10 +421,15 @@ async function postTrialsToSheet(trialRows){
     }
     function mul1x2(){ var a=RI(2,9), b=RI(10,19); return {a:a,b:b,op:'×',ans:a*b,tag:'mul_1x2'}; }
     function div2by1(){ var d=RI(2,9), q=RI(10,19), p=d*q; return {a:p,b:d,op:'÷',ans:q,tag:'div_2by1'}; }
+
+    // Faster ramp: easiest 1–4, then 5–9 (no-carry/borrow), 10–16 (carry/borrow), then harder mul/div
     function problemFor(trial){
-      if (trial<=6){ var g=[addUnder10,subUnder10,mulEasy,divEasy]; return g[RI(0,g.length-1)](); }
-      if (trial<=14){ return Math.random()<0.5 ? addNoCarry() : subNoBorrow(); }
-      if (trial<=22){ return Math.random()<0.5 ? addCarry() : subBorrow(); }
+      if (trial<=4){
+        var g=[addUnder10,subUnder10,mulEasy,divEasy];
+        return g[RI(0,g.length-1)]();
+      }
+      if (trial<=9){ return Math.random()<0.5 ? addNoCarry() : subNoBorrow(); }
+      if (trial<=16){ return Math.random()<0.5 ? addCarry() : subBorrow(); }
       return Math.random()<0.5 ? mul1x2() : div2by1();
     }
 
@@ -358,7 +446,7 @@ async function postTrialsToSheet(trialRows){
       );
       var right = el('div', { class:'right' },
         el('div', { class:'scorebar' }, 'Vitality: ', el('span', { class:'score', id:'score' }, String(S.vitality))),
-        el('button', { class:'secondary', onclick:function(){ onStop('manual'); } }, 'Stop & Finish')
+        el('button', { class:'taskStop', onclick:function(){ onStop('manual'); } }, 'Stop & Finish')
       );
       return el('div', { class:'topbar' }, el('div', { class:'top' }, left, right));
     }
@@ -372,24 +460,45 @@ async function postTrialsToSheet(trialRows){
     function screenConsent(){
       setView(el('div', {},
         el('h1', {}, 'Problem-Solving Study'),
-        el('p', {}, "You'll solve short math problems. You can stop at any time using ", el('strong', {}, 'Stop & Finish'), '.'),
+        el('p', {},
+  "You'll solve short math problems. You decide when to stop the game with the ",
+  el('strong', {}, 'Stop & Finish'),
+  ' button.'
+),
+
         el('div', { class:'space' }),
         el('div', { class:'row' }, el('button', { onclick:function(){ S.phase='instructions'; screenInstructions(); } }, 'I consent & continue'))
       ));
     }
 
-    function screenInstructions(){
+        function screenInstructions(){
       setView(el('div', {},
+        topbar(),
         el('h1', {}, 'Instructions'),
-        el('p', {}, 'Type your answer and press Enter. Practice is brief, then the main task begins.'),
-        el('ul', {},
-          el('li', {}, 'Practice: ', String(CONFIG.PRACTICE_TRIALS), ' problems.'),
-          el('li', {}, 'Main task: self-paced. ', el('strong', {}, 'Stop & Finish'), ' is always available.')
+        el('div', { class:'inst-block' },
+          el('p', { class:'inst-line' }, 'You will solve short math problems.'),
+          el('p', { class:'inst-line' }, 'Type your answer and press Enter.'),
+          el('p', { class:'inst-line' }, 'The problems will gradually become more difficult.'),
+          el('p', { class:'inst-line' }, 'In the main task, each problem is timed.'),
+          el('p', { class:'inst-line' }, 'If you do not answer before the timer runs out, the task automatically moves on and counts the problem as incorrect.'),
+          el('p', { class:'inst-line' },
+            'You decide when to stop the game with the ',
+            el('strong', {}, 'Stop & Finish'),
+            ' button.'
+          )
         ),
+                el('ul', { class:'inst-list' },
+          el('li', {}, 'Practice: ', String(CONFIG.PRACTICE_TRIALS), ' untimed practice problems.'),
+          el('li', {}, 'Main task: timed problems that get harder over time. The time limit shrinks slightly as you answer more problems correctly.')
+        ),
+
         el('div', { class:'space' }),
-        el('div', { class:'row' }, el('button', { onclick:startPractice }, 'Start practice'))
+        el('div', { class:'row' },
+          el('button', { onclick:startPractice }, 'Start practice')
+        )
       ));
     }
+
 
     function screenPracticeFix(){ setView(el('div', {}, topbar())); }
     function screenMainFix(){ setView(el('div', {}, topbar())); }
@@ -401,7 +510,7 @@ async function postTrialsToSheet(trialRows){
         topbar(),
         renderProblem(pb),
         el('div', { class:'inputline' }, input),
-        el('div', { class:'hint' }, 'Press Enter to submit')
+        el('div', { class:'hint' }, 'Press Enter to submit (practice is not timed)')
       ));
       input.focus();
     }
@@ -410,23 +519,38 @@ async function postTrialsToSheet(trialRows){
       setView(el('div', {}, topbar(),
         el('div', { class:'interstitial' },
           el('div', { class:'bigtitle' }, 'Practice complete'),
-          el('div', { class:'subtitle' }, "You're about to begin the main task. You can stop at any time using ", el('strong', {}, 'Stop & Finish'), '.'),
+          el('div', { class:'subtitle' },
+  'You’re about to begin the main task. You decide when to stop the game with the ',
+  el('strong', {}, 'Stop & Finish'),
+  ' button.'
+),
+
           el('button', { onclick:startMain }, 'Begin main task')
         )
       ));
     }
 
+    /* blank between-block screen */
+    function screenBlockRest(){
+      setView(el('div', {}, topbar()));
+    }
+
     function screenMainProblem(pb){
+      clearTrialTimers();
       var input = el('input', { id:'answer', type:'number', inputmode:'numeric', autocomplete:'off', placeholder:'Your answer' });
       var token = hasCrypto ? globalThis.crypto.randomUUID() : String(Math.random()).slice(2);
       input.addEventListener('keydown', function(e){ if(e.key==='Enter'){ handleSubmit(pb, token, input); } });
+      var hint = el('div', { class:'hint' }, 'Press Enter to submit');
+      var timerEl = el('div', { class:'hint', id:'timerHint' }, '');
       setView(el('div', {},
         topbar(),
         renderProblem(pb),
         el('div', { class:'inputline' }, input),
-        el('div', { class:'hint' }, 'Press Enter to submit')
+        hint,
+        timerEl
       ));
       input.focus();
+      startTrialTimer(pb, token, input, timerEl);
     }
 
     function screenFeedback(correct){
@@ -524,29 +648,72 @@ async function postTrialsToSheet(trialRows){
     }
 
     /* ---------- Levels celebration ---------- */
-  function showLevelCelebration(levelName){
-  const ov = el('div', { class:'level-ov' });
+    function showLevelCelebration(levelName){
+      const ov = el('div', { class:'level-ov' });
+      const topConfetti = el('div', { class:'confetti-top' });
 
-  // Confetti container at the TOP of the overlay (higher on screen)
-  const topConfetti = el('div', { class:'confetti-top' });
+      const panel = el('div', { class:'level-panel' },
+        el('div', { class:'level-title' }, 'Congratulations!'),
+        el('div', { class:'level-sub' }, 'You made it to ', el('strong', {}, levelName))
+      );
 
-  const panel = el('div', { class:'level-panel' },
-    el('div', { class:'level-title' }, 'Congratulations!'),
-    el('div', { class:'level-sub' }, 'You made it to ', el('strong', {}, levelName))
-  );
+      ov.appendChild(topConfetti);
+      ov.appendChild(panel);
+      document.body.appendChild(ov);
 
-  // Order matters: confetti (z-index 1), then panel (z-index 2)
-  ov.appendChild(topConfetti);
-  ov.appendChild(panel);
-  document.body.appendChild(ov);
+      confettiBurst(topConfetti, 4500, 220);
+      setTimeout(()=> { ov.remove(); }, CONFIG.LEVEL_CELEBRATE_MS);
+    }
 
-  // Start confetti NOW (same time as popup), vibrant and longer
-  confettiBurst(topConfetti, 4500, 220);
+    /* ---------- Audio feedback (negative "rude" sound) ---------- */
+    var audioCtx = null;
+    function ensureAudioCtx(){
+      if (!audioCtx){
+        var AC = window.AudioContext || window.webkitAudioContext;
+        if (AC){ audioCtx = new AC(); }
+      }
+    }
+    function playBad(){
+      ensureAudioCtx();
+      if (!audioCtx) return;
+      var ctx = audioCtx;
+      var t = ctx.currentTime;
+      var osc = ctx.createOscillator();
+      var gain = ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(220, t);
+      osc.frequency.linearRampToValueAtTime(80, t+0.25);
+      gain.gain.setValueAtTime(0.35, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t+0.25);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(t);
+      osc.stop(t+0.27);
+    }
 
-  // Remove overlay (and confetti container) together
-  setTimeout(()=> { ov.remove(); }, CONFIG.LEVEL_CELEBRATE_MS);
-}
-
+    /* ---------- Per-trial timer ---------- */
+    function startTrialTimer(pb, token, inputEl, timerEl){
+      clearTrialTimers();
+      var limit = S.timeLimitMs || CONFIG.TIME_LIMIT_START_MS;
+      var remaining = Math.ceil(limit/1000);
+      if (timerEl){
+        timerEl.textContent = 'Time remaining: ' + remaining + ' s';
+      }
+      S.trialTimerId = setInterval(function(){
+        if (S.stopped || inputEl.disabled){
+          clearTrialTimers();
+          return;
+        }
+        remaining -= 1;
+        if (timerEl){
+          timerEl.textContent = 'Time remaining: ' + Math.max(0, remaining) + ' s';
+        }
+        if (remaining <= 0){
+          clearTrialTimers();
+          handleTimeout(pb, token, inputEl);
+        }
+      }, 1000);
+    }
 
     /* ---------- Flow ---------- */
     function startPractice(){
@@ -567,6 +734,7 @@ async function postTrialsToSheet(trialRows){
       S.stopped=false; clearTimers();
       S.phase='main';
       S.trialIdx=0; S.blockIdx=1; S.blockTrials=0; S.blockCorrect=0; S.totalCorrect=0; S.totalIncorrect=0; S.vitality=0; S.levelCount=0;
+      S.timeLimitMs = CONFIG.TIME_LIMIT_START_MS;
       S.mainStartAt=Date.now();
       updateLevelBadge();
       S.hardStop = later(function(){ onStop('timeout'); }, CONFIG.MAX_MINUTES*60*1000);
@@ -595,29 +763,52 @@ async function postTrialsToSheet(trialRows){
       if (Number.isNaN(given)) return;
 
       inputEl.disabled=true; inputEl.blur();
+      clearTrialTimers();
       var rt=Math.max(0, performance.now()-pb.presentedAt);
       var correct=(given===pb.ans);
+      finishTrial(pb, given, correct, rt, false);
+    }
 
+    function handleTimeout(pb, token, inputEl){
+      if (S.stopped) return;
+      if (inputEl.disabled) return;
+      inputEl.disabled=true; inputEl.blur();
+      var rt=Math.max(0, performance.now()-pb.presentedAt);
+      finishTrial(pb, null, false, rt, true);
+    }
+
+    function finishTrial(pb, given, correct, rt, timedOut){
       S.trialIdx++; S.blockTrials++;
-      if (correct){ S.totalCorrect++; S.blockCorrect++; S.vitality+=1; } else { S.totalIncorrect++; S.vitality-=1; }
+      if (correct){ S.totalCorrect++; S.blockCorrect++; S.vitality+=1; }
+      else { S.totalIncorrect++; S.vitality-=1; }
 
       if (pb.tag==='attention_early') passEarly=correct;
       if (pb.tag==='attention_mid') passMid=correct;
 
+      var levelIndex = Math.floor(S.totalCorrect/5);
+      var newLimit = CONFIG.TIME_LIMIT_START_MS - levelIndex * CONFIG.TIME_LIMIT_STEP_MS;
+      if (newLimit < CONFIG.TIME_LIMIT_MIN_MS) newLimit = CONFIG.TIME_LIMIT_MIN_MS;
+      S.timeLimitMs = newLimit;
+
       trials.push({
         pid:pid, arm:assigned, trial:pb.trial, block:pb.block, a:pb.a, op:pb.op, b:pb.b,
-        ans:pb.ans, given:given, correct:correct, rt_ms:Math.round(rt),
-        vitality_after:S.vitality, tag:(pb.tag||''), timestamp:new Date().toISOString()
+        ans:pb.ans, given:(given==null?'':given), correct:correct, rt_ms:Math.round(rt),
+        vitality_after:S.vitality,
+        tag:(timedOut ? ((pb.tag||'')? (pb.tag+';timeout') : 'timeout') : (pb.tag||'')),
+        timestamp:new Date().toISOString()
       });
 
       var scoreEl=document.getElementById('score');
       if (scoreEl) scoreEl.textContent=String(S.vitality);
 
+      if (!correct){
+        playBad();
+      }
+
       if (assigned==='levels'){
         var before = S.levelCount;
-        var newLevel = Math.floor(S.totalCorrect/5);
-        if (newLevel > before){
-          S.levelCount = newLevel;
+        if (levelIndex > before){
+          S.levelCount = levelIndex;
           updateLevelBadge();
           var name = LEVELS[Math.min(S.levelCount, LEVELS.length-1)];
           showLevelCelebration(name);
@@ -626,25 +817,30 @@ async function postTrialsToSheet(trialRows){
         }
       }
 
-      if (assigned==='micro'){
-        screenFeedback(correct);
-        later(function(){
-          if (S.trialIdx >= CONFIG.MAX_TRIALS){ onStop('trialCap'); return; }
-          afterITI();
-        }, CONFIG.FEEDBACK_MS);
-      } else {
-        afterITI();
-      }
+      afterITI();
     }
 
     function afterITI(){
       if (S.trialIdx >= CONFIG.MAX_TRIALS){ onStop('trialCap'); return; }
-      if (assigned==='batch10' && S.blockTrials===10){
-        screenRecap();
-        later(function(){ S.blockIdx++; S.blockTrials=0; S.blockCorrect=0; mainLoop(); }, CONFIG.BATCH_RECAP_MS);
-        return;
+
+      if (S.blockTrials===10){
+        if (assigned==='batch10'){
+          screenRecap();
+          later(function(){
+            S.blockIdx++; S.blockTrials=0; S.blockCorrect=0;
+            mainLoop();
+          }, CONFIG.BATCH_RECAP_MS);
+          return;
+        } else {
+          // control and levels: same-length blank screen break
+          screenBlockRest();
+          later(function(){
+            S.blockIdx++; S.blockTrials=0; S.blockCorrect=0;
+            mainLoop();
+          }, CONFIG.BATCH_RECAP_MS);
+          return;
+        }
       }
-      if (S.blockTrials===10){ S.blockIdx++; S.blockTrials=0; S.blockCorrect=0; }
       mainLoop();
     }
 
@@ -695,7 +891,6 @@ async function postTrialsToSheet(trialRows){
 
       postSummaryToSheet(summary).catch(()=>{});
       postTrialsToSheet(trials).catch(()=>{});
-
     }
 
     /* ---------- Downloads ---------- */
@@ -716,45 +911,97 @@ async function postTrialsToSheet(trialRows){
     }
 
     /* ---------- Confetti ---------- */
-    function confetti(ms=4200, n=160){
-  const root = el('div', { class:'confetti' });
-  const cols = ['#FF3B30','#FF9500','#FFCC00','#34C759','#00C7BE','#007AFF','#AF52DE','#5856D6','#FF2D55']; // vibrant
-  for (let i=0;i<n;i++){
-    const p = el('div', { class:'p' });
-    p.style.left = (Math.random()*100) + 'vw';
-    p.style.top = '-24px';
-    p.style.width = (6 + Math.random()*10) + 'px';
-    p.style.height = (10 + Math.random()*16) + 'px';
-    p.style.background = cols[i % cols.length];
-    p.style.opacity = (0.92 + Math.random()*0.08).toFixed(2);
-    const dur = 1200 + Math.random()*1800; // 1.2s–3.0s
-    p.style.animation = `fall ${dur}ms linear`;
-    p.style.transform = `translateY(-140px) rotate(${Math.random()*360}deg)`;
-    p.style.filter = 'saturate(1.35)';
-    root.appendChild(p);
-  }
-  document.body.appendChild(root);
-  setTimeout(()=> root.remove(), ms); // keep on screen longer than most pieces
-}
-function confettiBurst(container, ms=4500, n=200){
-  const cols = ['#FF3B30','#FF9500','#FFCC00','#34C759','#00C7BE','#007AFF','#AF52DE','#5856D6','#FF2D55']; // vibrant
-  for (let i=0;i<n;i++){
-    const p = el('div', { class:'p' });
-    p.style.position = 'absolute';
-    p.style.left = (Math.random()*100) + '%';
-    p.style.top = '-24px';
-    p.style.width = (6 + Math.random()*10) + 'px';
-    p.style.height = (10 + Math.random()*16) + 'px';
-    p.style.background = cols[i % cols.length];
-    p.style.opacity = (0.92 + Math.random()*0.08).toFixed(2);
-    const dur = 1200 + Math.random()*2200;     // 1.2s–3.4s
-    p.style.animation = `fall ${dur}ms linear`; // reuses your @keyframes fall
-    p.style.transform = `translateY(-140px) rotate(${Math.random()*360}deg)`;
-    p.style.filter = 'saturate(1.35)';
-    container.appendChild(p);
-  }
-  setTimeout(()=>{ if (container && container.parentNode){ container.remove(); } }, ms);
-}
+        function confetti(ms=4200, n=160){
+      const root = el('div', { class:'confetti' });
+      const cols = ['#FF3B30','#FF9500','#FFCC00','#34C759','#00C7BE','#007AFF','#AF52DE','#5856D6','#FF2D55'];
+
+      for (let i=0;i<n;i++){
+        const p = el('div', { class:'p' });
+
+        // random size
+        const base = 6 + Math.random()*10;
+        const height = base * (1.2 + Math.random()*0.8);
+
+        p.style.left = (Math.random()*100) + 'vw';
+        p.style.top = '-24px';
+        p.style.width = base + 'px';
+        p.style.height = height + 'px';
+        p.style.background = cols[i % cols.length];
+        p.style.opacity = (0.85 + Math.random()*0.15).toFixed(2);
+
+        // some pieces are rounder (little circles)
+        const shapeRoll = Math.random();
+        if (shapeRoll < 0.25){
+          p.style.borderRadius = '50%';
+        } else if (shapeRoll < 0.6){
+          p.style.borderRadius = '6px';
+        } else {
+          p.style.borderRadius = '2px';
+        }
+
+        // sideways drift
+        const drift = (Math.random() < 0.5 ? -1 : 1) * (20 + Math.random()*60);
+        p.style.setProperty('--driftX', drift + 'px');
+
+        // varied duration + slight delay
+        const dur = 1600 + Math.random()*2400;     // 1.6s–4.0s
+        const delay = Math.random()*400;           // up to 0.4s
+        p.style.animation = 'fall ' + dur + 'ms linear ' + delay + 'ms forwards';
+
+        // a bit more pop
+        p.style.filter = 'saturate(1.35)';
+
+        root.appendChild(p);
+      }
+      document.body.appendChild(root);
+      setTimeout(function(){ root.remove(); }, ms);
+    }
+
+    function confettiBurst(container, ms=4500, n=200){
+      const cols = ['#FF3B30','#FF9500','#FFCC00','#34C759','#00C7BE','#007AFF','#AF52DE','#5856D6','#FF2D55'];
+
+      for (let i=0;i<n;i++){
+        const p = el('div', { class:'p' });
+
+        // random size
+        const base = 5 + Math.random()*9;
+        const height = base * (1.3 + Math.random()*0.7);
+
+        p.style.position = 'absolute';
+        p.style.left = (Math.random()*100) + '%';
+        p.style.top = '-24px';
+        p.style.width = base + 'px';
+        p.style.height = height + 'px';
+        p.style.background = cols[i % cols.length];
+        p.style.opacity = (0.85 + Math.random()*0.15).toFixed(2);
+
+        const shapeRoll = Math.random();
+        if (shapeRoll < 0.25){
+          p.style.borderRadius = '50%';
+        } else if (shapeRoll < 0.6){
+          p.style.borderRadius = '6px';
+        } else {
+          p.style.borderRadius = '2px';
+        }
+
+        const drift = (Math.random() < 0.5 ? -1 : 1) * (30 + Math.random()*80);
+        p.style.setProperty('--driftX', drift + 'px');
+
+        const dur = 1700 + Math.random()*2600;     // 1.7s–4.3s
+        const delay = Math.random()*350;
+        p.style.animation = 'fall ' + dur + 'ms linear ' + delay + 'ms forwards';
+        p.style.filter = 'saturate(1.4)';
+
+        container.appendChild(p);
+      }
+
+      setTimeout(function(){
+        if (container && container.parentNode){
+          container.remove();
+        }
+      }, ms);
+    }
+
 
     /* ---------- Kickoff ---------- */
     setView(el('div', {}, el('h1', {}, 'Loading…')));
